@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import sys
@@ -7,7 +8,11 @@ import json
 def monitor_requests(driver, url):
     """Monitors network requests sent by the browser."""
     # Visit the URL
-    driver.get(url)  # Use the URL from the argument
+    try:
+        driver.get(url)  # Use the URL from the argument
+    except TimeoutException:
+        print("Timeout occurred while loading the page:", url)
+        return  # Skip monitoring requests for this URL
 
     # Get performance entries after page load
     log_entries = driver.get_log("performance")
@@ -29,7 +34,6 @@ def monitor_requests(driver, url):
             pass  # Ignore errors if unable to parse the message
 
     # Print the monitored requests
-    # print("Monitored Requests for", url)
     for request in requests:
         print(request)
 
