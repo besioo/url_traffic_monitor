@@ -7,15 +7,19 @@ import json
 
 def monitor_requests(driver, url):
     """Monitors network requests sent by the browser."""
-    # Visit the URL
     try:
         driver.get(url)  # Use the URL from the argument
     except TimeoutException:
-        print("Timeout occurred while loading the page:", url)
-        return  # Skip monitoring requests for this URL
+        pass
+    except:
+        pass
 
     # Get performance entries after page load
-    log_entries = driver.get_log("performance")
+    try:
+        log_entries = driver.get_log("performance")
+    except:
+        pass
+
     requests = []
     for entry in log_entries:
         try:
@@ -30,8 +34,8 @@ def monitor_requests(driver, url):
                         req_url = request_info["url"]
                         if not req_url.startswith("data:"):
                             requests.append(req_url)
-        except (KeyError, json.JSONDecodeError):
-            pass  # Ignore errors if unable to parse the message
+        except:
+            pass
 
     # Print the monitored requests
     for request in requests:
@@ -59,5 +63,7 @@ if __name__ == "__main__":
         with open(urls, 'r') as urls_file:
             for url in urls_file:
                 monitor_requests(driver, url.strip())
+    except:
+        pass
     finally:
         driver.quit()
